@@ -48,13 +48,13 @@ const app = express();
  * Connect to MongoDB.
  */
 var config = require('cloud-env');
-var mongoUrl = '127.0.0.1:27017/' + 'test';
-// if OPENSHIFT env variables are present, use the available connection info:
-if (config.MONGODB_DB_URL) {
-  mongoUrl = config.MONGODB_DB_URL + config.APP_NAME;
-}
-
-mongoose.connect(mongoUrl);
+//var mongoUrl = 'mongodb://127.0.0.1:27017/' + config.APP_NAME;
+//// if OPENSHIFT env variables are present, use the available connection info:
+//if (!config.MONGODB_DB_USERNAME) {
+//  mongoUrl = config.MONGODB_DB_URL + config.APP_NAME;
+//}
+//console.log(mongoUrl)
+mongoose.connect(config.MONGODB_DB_URL + config.APP_NAME);
 
 //mongoose.connect(process.env.MONGODB || process.env.MONGOLAB_URI);
 
@@ -87,8 +87,8 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   store: new MongoStore({
     //url: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
-    //url: config.MONGODB_DB_URL + '/' + config.APP_NAME,
-    url: mongoUrl,
+    //url: config.MONGODB_DB_URL + '/' + config.APP_NAME, //TODO: NEED TO BE CHANGED BEFORE PUSH TO OPENSHIFT
+    url: config.MONGODB_DB_URL + config.APP_NAME,
     autoReconnect: true
   })
 }));
@@ -240,7 +240,7 @@ var PORT = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 /**
  * Start Express server.
  */
-app.listen(PORT, IP_ADDRESS, () => {
+app.listen(config.PORT, config.IP, () => {
   console.log(`Express server listening on port ${PORT} in ${app.settings.env} mode`);
 });
 

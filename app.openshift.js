@@ -49,12 +49,11 @@ const app = express();
  */
 var config = require('cloud-env');
 var mongoUrl = '127.0.0.1:27017/' + 'test';
-
 // if OPENSHIFT env variables are present, use the available connection info:
 if (config.MONGODB_DB_URL) {
-  mongoUrl = config.MONGODB_DB_URL + '/' + config.APP_NAME;
+  mongoUrl = config.MONGODB_DB_URL + config.APP_NAME;
 }
-console.log(mongoUrl);
+
 mongoose.connect(mongoUrl);
 
 //mongoose.connect(process.env.MONGODB || process.env.MONGOLAB_URI);
@@ -88,6 +87,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   store: new MongoStore({
     //url: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
+    //url: config.MONGODB_DB_URL + '/' + config.APP_NAME,
     url: mongoUrl,
     autoReconnect: true
   })
@@ -240,7 +240,7 @@ var PORT = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 /**
  * Start Express server.
  */
-app.listen(PORT, IP_ADDRESS,() => {
+app.listen(PORT, IP_ADDRESS, () => {
   console.log(`Express server listening on port ${PORT} in ${app.settings.env} mode`);
 });
 
