@@ -240,7 +240,7 @@ var PORT = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 /**
  * Start Express server.
  */
-app.listen(PORT,() => {
+app.listen(PORT,IP_ADDRESS, () => {
   console.log(`Express server listening on port ${PORT} in ${app.settings.env} mode`);
 });
 
