@@ -87,7 +87,8 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   store: new MongoStore({
     //url: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
-    url: config.MONGODB_DB_URL + '/' + config.APP_NAME,
+    //url: config.MONGODB_DB_URL + '/' + config.APP_NAME,
+    url: mongoUrl,
     autoReconnect: true
   })
 }));
