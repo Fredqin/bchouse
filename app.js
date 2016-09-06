@@ -52,7 +52,7 @@ var mongoUrl = 'mongodb://localhost:27017/test';
 
 // if OPENSHIFT env variables are present, use the available connection info:
 if (config.MONGODB_DB_URL) {
-  mongoUrl = config.MONGODB_DB_URL + '/' + config.APP_NAME;
+  mongoUrl = config.MONGODB_DB_URL + config.APP_NAME;
 }
 console.log(mongoUrl);
 mongoose.connect(mongoUrl);
