@@ -19,7 +19,6 @@ const expressValidator = require('express-validator');
 const sass = require('node-sass-middleware');
 const multer = require('multer');
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
-var config = require('cloud-env');
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -48,10 +47,18 @@ const app = express();
 /**
  * Connect to MongoDB.
  */
-//mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
+var config = require('cloud-env');
+var mongoUrl = 'mongodb://localhost:27017/test';
 
-console.log(config.MONGODB_DB_URL + config.APP_NAME)
-mongoose.connect(config.MONGODB_DB_URL);
+// if OPENSHIFT env variables are present, use the available connection info:
+if (config.MONGODB_DB_URL) {
+  mongoUrl = config.MONGODB_DB_URL + '/' + config.APP_NAME;
+}
+console.log(mongoUrl);
+mongoose.connect(mongoUrl);
+
+//mongoose.connect(process.env.MONGODB || process.env.MONGOLAB_URI);
+
 mongoose.connection.on('connected', () => {
   console.log('%s MongoDB connection established!', chalk.green('✓'));
 });
@@ -81,7 +88,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   store: new MongoStore({
     //url: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
-    url: config.MONGODB_DB_URL,
+    url: mongoUrl,
     autoReconnect: true
   })
 }));
@@ -233,8 +240,12 @@ var PORT = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 /**
  * Start Express server.
  */
-app.listen(PORT, IP_ADDRESS,() => {
-  console.log(`Express server listening on port ${PORT} in ${app.settings.env} mode`);
+//app.listen(PORT, IP_ADDRESS,() => {
+//  console.log(`Express server listening on port ${PORT} in ${app.settings.env} mode`);
+//});
+
+app.listen(PORT, () => {
+  console.log('%s Express server listening on port %d in %s mode.', chalk.green('✓'), app.get('port'), app.get('env'));
 });
 
 module.exports = app;
