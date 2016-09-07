@@ -48,12 +48,6 @@ const app = express();
  * Connect to MongoDB.
  */
 var config = require('cloud-env');
-//var mongoUrl = 'mongodb://127.0.0.1:27017/' + config.APP_NAME;
-//// if OPENSHIFT env variables are present, use the available connection info:
-//if (!config.MONGODB_DB_USERNAME) {
-//  mongoUrl = config.MONGODB_DB_URL + config.APP_NAME;
-//}
-//console.log(mongoUrl)
 mongoose.connect(config.MONGODB_DB_URL + config.APP_NAME);
 
 //mongoose.connect(process.env.MONGODB || process.env.MONGOLAB_URI);
@@ -145,7 +139,7 @@ app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userControl
 /**
  * API house
  */
-app.get('/api/house', houseController.getHouseListing);
+app.post('/api/house', houseController.getHouseListing);
 
 
 /**
