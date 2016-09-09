@@ -28,7 +28,16 @@ exports.getHouseListing = function (req, res) {
                 var subAreaID = data.attr('value');
                 subAreaIDList.push(subAreaID);
             });
-            console.log(subAreaIDList)
+
+            var listing_url = 'http://www.realtylink.org/prop_search/Summary.cfm?BCD=GV&imdp=11&RSPP=5&SRTB=P_Price&ERTA=True&MNAGE=0&MXAGE=200&MNBD=0&MNBT=0&PTYTID=1&MNPRC=200000&MXPRC=900000&SCTP=RS' +
+                    '&AIDL=' + subAreaIDList.join(',');
+
+            request(listing_url, function (error, response, html) {
+                if (!error) {
+                    console.log(html)
+                    res.send(html)
+                }
+            })
         }
     })
 };
