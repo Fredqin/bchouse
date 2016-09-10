@@ -29,15 +29,45 @@ exports.getHouseListing = function (req, res) {
                 subAreaIDList.push(subAreaID);
             });
 
-            var listing_url = 'http://www.realtylink.org/prop_search/Summary.cfm?BCD=GV&imdp=11&RSPP=5&SRTB=P_Price&ERTA=True&MNAGE=0&MXAGE=200&MNBD=0&MNBT=0&PTYTID=1&MNPRC=200000&MXPRC=900000&SCTP=RS' +
+            // property type: 1 - apartment, 2 - townhouse
+            // 3 - Duplex, 5 - House
+
+
+            var listing_url = 'http://www.realtylink.org/prop_search/Summary.cfm?BCD=GV&imdp=11&RSPP=5&SRTB=P_Price&ERTA=True&MNAGE=0&MXAGE=200&MNBD=0&MNBT=0&PTYTID=1&MNPRC=200000&MXPRC=10000000&SCTP=RS' +
                     '&AIDL=' + subAreaIDList.join(',');
 
             request(listing_url, function (error, response, html) {
                 if (!error) {
-                    console.log(html)
-                    res.send(html)
+                    var $ = cheerio.load(html);
+
+                    // find next button
+                    var nextButton = $('img[src="images/property_next.gif"]');
+                    if (nextButton.length > 0) {
+                        var link = nextButton.parent().attr('href');
+                    }
+
+                    // extract listing
+                    extractListing(html);
                 }
             })
         }
     })
 };
+
+/**
+ * private function to extract listing from listing page
+ * @param listingPage
+ */
+function extractListing(listingPage) {
+    var $ = cheerio.load(listingPage);
+
+    // find all tr
+    $('tr').filter(function(i, el) {
+        var tr = $(this)
+
+        if (tr.attr('bgcolor') && tr.attr('bgcolor') === "CCCC99") {
+            console.log(i)
+        }
+    });
+
+}

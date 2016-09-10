@@ -32,7 +32,7 @@ const homeController = require('./controllers/home');
 const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
-const houseController = require('./controllers/house');
+const houseController = require('./controllers/listing');
 
 /**
  * API keys and Passport configuration.
