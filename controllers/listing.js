@@ -2,6 +2,7 @@ var express = require('express');
 var fs = require('fs');
 var request = require('request');
 var cheerio = require('cheerio');
+var $ = require('jquery');
 
 /**
  * Private function to update house listing in mongodb server
@@ -47,7 +48,7 @@ exports.getHouseListing = function (req, res) {
                     }
 
                     // extract listing
-                    extractListing(html);
+                    extractListings(html);
                 }
             })
         }
@@ -58,16 +59,36 @@ exports.getHouseListing = function (req, res) {
  * private function to extract listing from listing page
  * @param listingPage
  */
-function extractListing(listingPage) {
+function extractListings(listingPage) {
     var $ = cheerio.load(listingPage);
 
     // find all tr
     $('tr').filter(function(i, el) {
-        var tr = $(this)
+        var tr = $(this);
 
         if (tr.attr('bgcolor') && tr.attr('bgcolor') === "CCCC99") {
-            console.log(i)
+            // get area
+            var area = getArea(el);
+
         }
     });
 
+}
+
+/**
+ * first row of the listing contains area in
+ * <font face="Arial,helvetica" size="-1">
+ <b>Edmonds, Burnaby</b>
+ </font>
+ * @param tr
+ */
+function getArea(tr) {
+    var area = "";
+
+    var $ = cheerio.load(tr);
+    var areaFont = $('font[face=\"Arial,helvetica\"]');
+    var areaBoldText = areaFont.find("b");
+    area = areaBoldText.html();
+
+    return area;
 }
